@@ -1,9 +1,16 @@
 #-------------------------------------------------
 #
 # Project created by QtCreator 2019-08-15T10:25:01
+# Author: HandsomeChen
 #
 #-------------------------------------------------
-
+#-------------------------------------------------
+#
+# Reference:<<Qt 学习之路 2>> by DevBean
+# First Version accomplished at 2019-08-15T16:20~
+# Second Version improved at 2019-08-15T18:05~
+#
+#-------------------------------------------------
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
