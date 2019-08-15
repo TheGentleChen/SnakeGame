@@ -1,11 +1,14 @@
-#ifndef WALL_H
+﻿#ifndef WALL_H
 #define WALL_H
+#include <QGraphicsItem>
 
-
-class Wall
+class Wall : public QGraphicsItem
 {
 public:
-    Wall();
+    Wall(qreal x, qreal y);
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 };
 
 #endif // WALL_H

@@ -1,16 +1,16 @@
-#ifndef CONSTANTS_H
+﻿#ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-//地板的尺寸
+//Floor size
 const int TILE_SIZE = 10;
-//蛇移动一次的尺寸
+//The size of the snake moving once
 const int SNAKE_SIZE = TILE_SIZE;
-//食物的半径
+//Radius of food
 const int FOOD_RADIUS = 3;
-//场景的尺寸
+//Scene size
 const int SCENE_SIZE = 200;
 
-//墙的场景坐标
+//The scene coordinates of Wall
 const int TOP_WALL = -100;
 const int BOTTOM_WALL = 100;
 const int LEFT_WALL = -100;

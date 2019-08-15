@@ -1,10 +1,13 @@
-#include "gamecontroller.h"
+﻿#include "gamecontroller.h"
 #include "food.h"
 #include "snake.h"
+#include "wall.h"
 #include "constants.h"
+#include "mainwindow.h"
 #include <QEvent>
 #include <QGraphicsScene>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 
 GameController::GameController(QGraphicsScene &scene, QObject *parent) :
@@ -12,7 +15,8 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     scene(scene),
     snake(new Snake(*this))
 {
-    timer.start(1000/33);
+    this->parent = (MainWindow *)parent;
+    timer.start(1000/30);
 
     scene.addItem(snake);
     addNewFood();
@@ -33,10 +37,20 @@ void GameController::resume()
 
 void GameController::gameOver()
 {
-    scene.clear();
-    snake = new Snake(*this);
-    scene.addItem(snake);
-    addNewFood();
+    pause();
+    if (QMessageBox::Yes == QMessageBox::question(this->parent, tr("Continue or Quit"), tr("Game Over!\nRestart the game?"),
+                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
+    {
+        resume();
+        scene.clear();
+        snake = new Snake(*this);
+        scene.addItem(snake);
+        addNewFood();
+    }
+    else
+    {
+        this->parent->close();
+    }
 }
 
 void GameController::snakeAteFood(Snake *snake, Food *food)
@@ -47,7 +61,9 @@ void GameController::snakeAteFood(Snake *snake, Food *food)
 }
 
 void GameController::snakeHitWall(Snake *snake, Wall *wall)
-{}
+{
+    QTimer::singleShot(0, this, SLOT(gameOver()));
+}
 
 void GameController::snakeAteItself(Snake *snake)
 {
@@ -56,14 +72,18 @@ void GameController::snakeAteItself(Snake *snake)
 
 void GameController::addNewFood()
 {
-    int x, y;
-    do
-    {
-        x = (int)(qrand() % 10) * 10;
-        y = (int)(qrand() % 10) * 10;
-    } while(snake->shape().contains(snake->mapFromScene(QPointF(x + TILE_SIZE/2, y + TILE_SIZE/2))));
-    Food *food = new Food(x, y);
+    int fx, fy;
+    findTowRandom(fx, fy);
+    Food *food = new Food(fx, fy);
     scene.addItem(food);
+
+    //Remove comment to open difficult mode
+    /*int wx, wy;
+    findTowRandom(wx, wy);
+    while (wx == fx && wy == fy)
+        findTowRandom(wx, wy);
+    Wall *wall = new Wall(wx, wy);
+    scene.addItem(wall);*/
 }
 
 void GameController::handleKeyPress(QKeyEvent *event)
@@ -95,6 +115,15 @@ bool GameController::eventFilter(QObject *object, QEvent *event)
         return true;
     }
     return QObject::eventFilter(object, event);
+}
+
+void GameController::findTowRandom(int &x, int &y)
+{
+    do
+    {
+        x = (int)(qrand() % 10) * 10;
+        y = (int)(qrand() % 10) * 10;
+    } while(snake->shape().contains(snake->mapFromScene(QPointF(x + TILE_SIZE/2, y + TILE_SIZE/2))));
 }
 
 GameController::~GameController()

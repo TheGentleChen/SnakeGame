@@ -20,8 +20,13 @@ private slots:
 
 
 private:
+    void initToolBar();
     void initSence();
     void initSenceBackground();
+    void resume();
+    void pause();
+    QToolBar *toolBarPause;
+    QToolBar *toolBarResume;
     QGraphicsScene *scene;
     QGraphicsView *view;
     GameController *controller;

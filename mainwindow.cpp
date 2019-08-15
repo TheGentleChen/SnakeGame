@@ -1,7 +1,9 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "gamecontroller.h"
 #include <QGraphicsView>
 #include <QTimer>
+#include <QAction>
+#include <QToolBar>
 
 #include "constants.h"
 
@@ -12,12 +14,35 @@ MainWindow::MainWindow(QWidget *parent)
       controller(new GameController(*scene, this))
 {
     setCentralWidget(view);
-    resize(600, 600);
+    resize(600, 664);
+    setFixedSize(this->width(), this->height());
 
+    initToolBar();
     initSence();
     initSenceBackground();
 
     QTimer::singleShot(0, this, SLOT(adjustViewSize()));
+}
+
+void MainWindow::initToolBar()
+{
+    QAction *actionResume = new QAction(QIcon(":/toolbar/resume"), tr("&Resume"), this);
+    actionResume->setShortcut(tr("CTRL+R"));
+    actionResume->setStatusTip(tr("Resume game"));
+    connect(actionResume, &QAction::triggered, this, &MainWindow::resume);
+    toolBarResume = addToolBar(tr("&Resume"));
+    toolBarResume->addAction(actionResume);
+
+    QAction *actionPause = new QAction(QIcon(":/toolbar/pause"), tr("&Pause"), this);
+    actionPause->setShortcut(tr("CTRL+P"));
+    actionPause->setStatusTip(tr("Pause game"));
+    connect(actionPause, &QAction::triggered, this, &MainWindow::pause);
+    toolBarPause = addToolBar(tr("&Pause"));
+    toolBarPause->addAction(actionPause);
+
+    toolBarPause->setEnabled(true);
+    toolBarResume->setEnabled(false);
+    statusBar();
 }
 
 void MainWindow::initSence()
@@ -35,9 +60,23 @@ void MainWindow::initSenceBackground()
     view->setBackgroundBrush(QBrush(bg));
 }
 
+void MainWindow::resume()
+{
+    controller->resume();
+    toolBarPause->setEnabled(true);
+    toolBarResume->setEnabled(false);
+}
+
+void MainWindow::pause()
+{
+    controller->pause();
+    toolBarPause->setEnabled(false);
+    toolBarResume->setEnabled(true);
+}
+
 void MainWindow::adjustViewSize()
 {
-    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatioByExpanding);
+    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 MainWindow::~MainWindow()

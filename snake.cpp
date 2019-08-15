@@ -1,4 +1,4 @@
-#include "snake.h"
+﻿#include "snake.h"
 #include "gamecontroller.h"
 #include "constants.h"
 #include <QPainter>
@@ -22,9 +22,9 @@ QRectF Snake::boundingRect() const
     foreach (QPointF item, tail)
     {
         maxX = item.x() > maxX ? item.x() : maxX;
-        minX = item.x() < maxX ? item.x() : minX;
+        minX = item.x() < minX ? item.x() : minX;
         maxY = item.y() > maxY ? item.y() : maxY;
-        minY = item.y() < maxY ? item.y() : minY;
+        minY = item.y() < minY ? item.y() : minY;
     }
     QPointF tl = mapFromScene(QPointF(minX, minY));
     QPointF br = mapFromScene(QPointF(maxX, maxY));
@@ -59,22 +59,29 @@ void Snake::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 
 void Snake::setDirction(Dirction dirction)
 {
+    if ((dirction == MoveUp && this->dirction == MoveDown) ||
+        (dirction == MoveDown && this->dirction == MoveUp) ||
+        (dirction == MoveLeft && this->dirction == MoveRight) ||
+        (dirction == MoveRight && this->dirction == MoveLeft))
+        return;
+
     this->dirction = dirction;
 }
 
 void Snake::advance(int step)
 {
     if (0 == step)  return;
-    //模拟snake的移动延迟时间，speed越大，移动越慢
+    //Simulate the movement delay time of snake,
+    //the greater the speed, the slower the movement
     if (tickCounter++ % speed != 0)   return;
     if (dirction == NoMove) return;
-    if (forwarding > 0) //蛇体有增长时
+    if (forwarding > 0) //When the snake body grows
     {
         forwarding--;
         QPointF growingPoint = head;
         tail << growingPoint;
     }
-    else                //蛇体无增长时
+    else                //When the snake body does not grow
     {
         tail.takeFirst();
         tail << head;
@@ -104,15 +111,15 @@ void Snake::advance(int step)
 void Snake::moveUp()
 {
     head.ry() -= SNAKE_SIZE;
-    if (head.x() < TOP_WALL)
-        head.rx() = BOTTOM_WALL;
+    if (head.y() < TOP_WALL)
+        head.ry() = BOTTOM_WALL;
 }
 
 void Snake::moveDown()
 {
     head.ry() += SNAKE_SIZE;
     if (head.y() > BOTTOM_WALL)
-        head.rx() = TOP_WALL;
+        head.ry() = TOP_WALL;
 }
 
 void Snake::moveLeft()
@@ -140,18 +147,14 @@ void Snake::handleCollisions()
             controller.snakeAteFood(this, (Food *)item);
             forwarding += 1;
         }
-        else if (item->data(GD_Type) == GO_Wall)
+        else if(item->data(GD_Type) == GO_Wall)
         {
             controller.snakeHitWall(this, (Wall *)item);
         }
-        else
-        {
-            controller.snakeAteItself(this);
-        }
     }
 
-    //if (tail.contains(head))
-    //    controller.snakeAteItself(this);
+    if (tail.contains(head))
+        controller.snakeAteItself(this);
 }
 
 Snake::~Snake()

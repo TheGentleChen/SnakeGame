@@ -1,4 +1,4 @@
-#ifndef GAMECONTROLLER_H
+﻿#ifndef GAMECONTROLLER_H
 #define GAMECONTROLLER_H
 
 #include <QObject>
@@ -9,6 +9,7 @@ class QKeyEvent;
 class Snake;
 class Food;
 class Wall;
+class MainWindow;
 
 class GameController : QObject
 {
@@ -29,7 +30,9 @@ protected:
 private:
     void handleKeyPress(QKeyEvent *event);
     void addNewFood();
+    void findTowRandom(int &x, int &y);
 
+    MainWindow *parent;
     QTimer timer;
     QGraphicsScene &scene;
     Snake *snake;

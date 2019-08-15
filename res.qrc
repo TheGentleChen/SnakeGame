@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/toolbar">
+        <file alias="pause">Images/pause.png</file>
+        <file alias="resume">Images/resume.png</file>
+    </qresource>
+</RCC>

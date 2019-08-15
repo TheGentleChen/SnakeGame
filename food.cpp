@@ -1,4 +1,4 @@
-#include "food.h"
+﻿#include "food.h"
 #include "constants.h"
 #include <QPainter>
 
@@ -17,7 +17,7 @@ QRectF Food::boundingRect() const
 QPainterPath Food::shape() const
 {
     QPainterPath path;
-    path.addEllipse(TILE_SIZE/2, TILE_SIZE/2,
+    path.addEllipse(QPointF(TILE_SIZE / 2, TILE_SIZE / 2),
                     FOOD_RADIUS, FOOD_RADIUS);
     return path;
 }
@@ -25,7 +25,7 @@ QPainterPath Food::shape() const
 void Food::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
-    //反锯齿
+    //Antialiasing
     painter->setRenderHint(QPainter::Antialiasing);
     painter->fillPath(shape(), QBrush(Qt::red));
     painter->restore();
